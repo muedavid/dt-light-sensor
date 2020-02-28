@@ -1,3 +1,5 @@
 # LIST YOUR PYTHON PACKAGES HERE
 Adafruit_TCS34725
 RPi.GPIO
+Adafruit_GPIO
+future

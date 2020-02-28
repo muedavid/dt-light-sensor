@@ -6,18 +6,22 @@ ARG REPO_NAME="dt-light-sensor"
 ARG ARCH=arm32v7
 ARG MAJOR=daffy
 ARG BASE_TAG=${MAJOR}-${ARCH}
+ARG BASE_IMAGE=dt-ros-commons
 
 # define base image
-FROM duckietown/dt-ros-commons:${BASE_TAG}
+FROM duckietown/${BASE_IMAGE}:${BASE_TAG}
 
 # define repository path
 ARG REPO_NAME
 ARG REPO_PATH="${CATKIN_WS_DIR}/src/${REPO_NAME}"
 WORKDIR "${REPO_PATH}"
 
-# create repo directory and copy the source code
+# create repo directory
 RUN mkdir -p "${REPO_PATH}"
-COPY . "${REPO_PATH}/"
+
+# copy dependencies files only
+COPY ./dependencies-apt.txt "${REPO_PATH}/"
+COPY ./dependencies-py.txt "${REPO_PATH}/"
 
 # install apt dependencies
 RUN apt-get update \
@@ -27,6 +31,9 @@ RUN apt-get update \
 
 # install python dependencies
 RUN pip install -r ${REPO_PATH}/dependencies-py.txt
+
+# copy the source code
+COPY . "${REPO_PATH}/"
 
 # build packages
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh && \

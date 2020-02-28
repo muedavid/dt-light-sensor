@@ -1,0 +1,11 @@
+  
+<launch>
+	<arg name="veh"/>
+
+	<group ns="$(arg veh)">
+		<node name="light_calib_node" pkg="light_sensor_calibration" type="light_calib_node.py" output="screen" required="true">
+			
+		</node>
+		
+	</group>
+</launch>

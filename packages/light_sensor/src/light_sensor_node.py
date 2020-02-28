@@ -85,34 +85,33 @@ class LightSensorNode(object):
         fname = self.getFilePath(self.veh_name)
         # Use default.yaml if file doesn't exsit
         if not os.path.isfile(fname):
-            rospy.logwarn("[%s] %s does not exist. Using default.yaml." % (
+            rospy.logwarn("[%s] %s does not exist. Using default values" % (
                 self.node_name, fname))
-            fname = self.getFilePath("default")
+        else:
+            with open(fname, 'r') as in_file:
+                try:
+                    yaml_dict = yaml.load(in_file)
+                except yaml.YAMLError as exc:
+                    rospy.logfatal("[%s] YAML syntax error. File: %s fname. Exc: %s" % (
+                        self.node_name, fname, exc))
+                    rospy.signal_shutdown("light sensor exiting")
+                    returns
 
-        with open(fname, 'r') as in_file:
-            try:
-                yaml_dict = yaml.load(in_file)
-            except yaml.YAMLError as exc:
-                rospy.logfatal("[%s] YAML syntax error. File: %s fname. Exc: %s" % (
-                    self.node_name, fname, exc))
-                rospy.signal_shutdown("light sensor exiting")
-                return
-
-    # Set parameters using value in yaml file
-        if yaml_dict is None:
-            # Empty yaml file
-            return
-        for param_name in ["mult", "offset"]:
-            param_value = yaml_dict.get(param_name)
-            if param_value is not None:
-                rospy.set_param("~"+param_name, param_value)
-            else:
-                # Skip if not defined, use default value instead.
-                pass
+                # Set parameters using value in yaml file
+                if yaml_dict is None:
+                    # Empty yaml file
+                    return
+                for param_name in ["mult", "offset"]:
+                    param_value = yaml_dict.get(param_name)
+                    if param_value is not None:
+                        rospy.set_param("~"+param_name, param_value)
+                    else:
+                        # Skip if not defined, use default value instead.
+                        pass
 
     def setup_parameter(self, param_name, default_value):
         value = rospy.get_param(param_name, default_value)
-    # Write to parameter server for transparency
+        # Write to parameter server for transparency
         rospy.set_param(param_name, value)
         rospy.loginfo("[%s] %s = %s " % (self.node_name, param_name, value))
         return value
