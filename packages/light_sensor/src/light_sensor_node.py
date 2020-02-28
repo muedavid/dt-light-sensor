@@ -95,7 +95,7 @@ class LightSensorNode(object):
                     rospy.logfatal("[%s] YAML syntax error. File: %s fname. Exc: %s" % (
                         self.node_name, fname, exc))
                     rospy.signal_shutdown("light sensor exiting")
-                    returns
+                    return
 
                 # Set parameters using value in yaml file
                 if yaml_dict is None:
