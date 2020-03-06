@@ -124,7 +124,7 @@ class LightSensorCalibrator(object):
         # rate.sleep()
 
     def getFilePath(self, name):
-        os.makedirs('/data/config/calibrations/light-sensor/', exist_ok=True)
+        os.makedirs('/data/config/calibrations/light-sensor/')
         return ('/data/config/calibrations/light-sensor/' + name + ".yaml")
 
     # def readParamFromFile(self):
