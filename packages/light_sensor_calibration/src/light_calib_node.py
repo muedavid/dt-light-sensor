@@ -56,7 +56,7 @@ class LightSensorCalibrator(object):
         self.lux2 = []
         input("Are you ready for the first light evaluation (ENTER)?")
 
-        for count in range(53):
+        for count in range(23):
             if count > 3:
                 self.lux1.append(self.get_lux())
             rate.sleep()
@@ -64,7 +64,7 @@ class LightSensorCalibrator(object):
         val1 = int(input("How much was the light luminescence?"))
         input("Are you ready for the next light evaluation (ENTER)?")
 
-        for count in range(53):
+        for count in range(23):
             if count > 3:
                 self.lux2.append(self.get_lux())
             rate.sleep()
@@ -86,11 +86,13 @@ class LightSensorCalibrator(object):
             "mult": int(self.mult),
             "offset": int(self.offset)
         }
+        
         file_name = self.getFilePath(self.veh_name)
-        with open(file_name, 'w') as outfile:
-            outfile.write(yaml.dump(data, default_flow_style=False))
+        if file_name != 'False':
+            with open(file_name, 'w') as outfile:
+                outfile.write(yaml.dump(data, default_flow_style=False))
 
-        rospy.loginfo("[%s] Saved to %s" % (self.node_name, file_name))
+            rospy.loginfo("[%s] Saved to %s" % (self.node_name, file_name))
 
     def get_lux(self):
         # Read R, G, B, C color data from the sensor.
@@ -124,8 +126,13 @@ class LightSensorCalibrator(object):
         # rate.sleep()
 
     def getFilePath(self, name):
-        os.makedirs('/data/config/calibrations/light-sensor/')
-        return ('/data/config/calibrations/light-sensor/' + name + ".yaml")
+        if os.path.isdir('/data/config/calibrations/light-sensor/'):
+            #das ganze automatisieren
+            print ("calibration is already done. delete File to callibrate again")
+            return ('False')
+        else:
+            os.makedirs('/data/config/calibrations/light-sensor/')
+            return ('/data/config/calibrations/light-sensor/' + name + ".yaml")
 
     # def readParamFromFile(self):
     # 	#Check file existance

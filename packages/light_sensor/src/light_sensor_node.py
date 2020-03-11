@@ -40,7 +40,7 @@ class LightSensorNode(object):
         # ROS-Publications
         self.msg_light_sensor = LightSensor()
         self.sensor_pub = rospy.Publisher(
-            'sensor_data', LightSensor, queue_size=1)
+            '~sensor_data', LightSensor, queue_size=1)
         get_lux_timer = rospy.Timer(rospy.Duration(secs=1), self.get_lux)
 
     def get_lux(self, timerevent):
