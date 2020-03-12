@@ -31,11 +31,12 @@ class LightSensorNode(object):
             integration_time=Adafruit_TCS34725.TCS34725_INTEGRATIONTIME_700MS,
             gain=Adafruit_TCS34725.TCS34725_GAIN_1X)
 
-        # Set parameter
+        #define parameter
+        self.mult = 0
+        self.offset = 0
+        #set parametervalue
         self.readParamFromFile()
-        # Set local gain using yam
-        self.mult = self.setup_parameter("~mult", 1)
-        self.offset = self.setup_parameter("~offset", 1)
+
 
         # ROS-Publications
         self.msg_light_sensor = LightSensor()
@@ -97,24 +98,12 @@ class LightSensorNode(object):
                     rospy.signal_shutdown("light sensor exiting")
                     return
 
-                # Set parameters using value in yaml file
-                if yaml_dict is None:
-                    # Empty yaml file
-                    return
-                for param_name in ["mult", "offset"]:
-                    param_value = yaml_dict.get(param_name)
-                    if param_value is not None:
-                        rospy.set_param("~"+param_name, param_value)
-                    else:
-                        # Skip if not defined, use default value instead.
-                        pass
-
-    def setup_parameter(self, param_name, default_value):
-        value = rospy.get_param(param_name, default_value)
-        # Write to parameter server for transparency
-        rospy.set_param(param_name, value)
-        rospy.loginfo("[%s] %s = %s " % (self.node_name, param_name, value))
-        return value
+                self.mult = yaml_dict.get_param("~mult",1) # 1 is default value and to change
+                self.offset = yaml_dict.get_param("~offset",1) # 1 is default value and to change
+                rospy.set_param("~mult",self.mult)
+                rospy.set_param("~offset",self.offset)
+                rospy.loginfo("[%s] %s = %s " % (self.node_name,"mult", self.mult))
+                rospy.loginfo("[%s] %s = %s " % (self.node_name,"offset", self.offset))
 
 
 if __name__ == '__main__':
