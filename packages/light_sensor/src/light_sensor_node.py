@@ -34,6 +34,8 @@ class LightSensorNode(object):
         #define parameter
         self.mult = 0
         self.offset = 0
+        self.default_mult=1
+        self.default_offset=0
         #set parametervalue
         self.readParamFromFile()
 
@@ -86,24 +88,28 @@ class LightSensorNode(object):
         fname = self.getFilePath(self.veh_name)
         # Use default.yaml if file doesn't exsit
         if not os.path.isfile(fname):
-            rospy.logwarn("[%s] %s does not exist. Using default values" % (
-                self.node_name, fname))
+            rospy.logwarn("[%s] %s does not exist. Using default values" % (self.node_name, fname))
+            self.mult = self.default_mult
+            self.offset = self.default_offset 
+            
         else:
             with open(fname, 'r') as in_file:
                 try:
                     yaml_dict = yaml.load(in_file)
+                    self.mult = yaml_dict["mult"]
+                    self.offset = yaml_dict["offset"]
                 except yaml.YAMLError as exc:
                     rospy.logfatal("[%s] YAML syntax error. File: %s fname. Exc: %s" % (
                         self.node_name, fname, exc))
                     rospy.signal_shutdown("light sensor exiting")
                     return
 
-                self.mult = yaml_dict.get_param("~mult",1) # 1 is default value and to change
-                self.offset = yaml_dict.get_param("~offset",1) # 1 is default value and to change
-                rospy.set_param("~mult",self.mult)
-                rospy.set_param("~offset",self.offset)
-                rospy.loginfo("[%s] %s = %s " % (self.node_name,"mult", self.mult))
-                rospy.loginfo("[%s] %s = %s " % (self.node_name,"offset", self.offset))
+        """
+        rospy.set_param("~mult",self.mult)
+        rospy.set_param("~offset",self.offset)
+        """
+        rospy.loginfo("[%s] %s = %s " % (self.node_name,"mult", self.mult))
+        rospy.loginfo("[%s] %s = %s " % (self.node_name,"offset", self.offset))
 
 
 if __name__ == '__main__':
