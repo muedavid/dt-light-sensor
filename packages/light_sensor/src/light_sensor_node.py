@@ -103,11 +103,7 @@ class LightSensorNode(object):
                         self.node_name, fname, exc))
                     rospy.signal_shutdown("light sensor exiting")
                     return
-
-        """
-        rospy.set_param("~mult",self.mult)
-        rospy.set_param("~offset",self.offset)
-        """
+                    
         rospy.loginfo("[%s] %s = %s " % (self.node_name,"mult", self.mult))
         rospy.loginfo("[%s] %s = %s " % (self.node_name,"offset", self.offset))
 
