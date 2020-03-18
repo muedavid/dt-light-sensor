@@ -8,7 +8,7 @@ To launch calibration procedure, use :
 
 Then to launch the light sensor node, use :
 
-`dts duckiebot demo --duckiebot_name WATCHTOWER_NAME --demo_name light_sensor --package_name light_sensor-arm32v7 --image duckietown/dt-light-sensor:daffy` 
+`dts duckiebot demo --duckiebot_name WATCHTOWER_NAME --demo_name light_sensor --package_name light_sensor --image duckietown/dt-light-sensor:daffy-arm32v7` 
 
 To plug in the RGB sensor correctly see the notes below:
 
