@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 import rospy
 import time
-# from Adafruit_GPIO import I2C
 import RPi.GPIO as GPIO
 import Adafruit_TCS34725
-# import smbus
 import yaml
 import os.path
-# from duckietown_utils import get_duckiefleet_root
 from duckietown_msgs.msg import LightSensor
 from duckietown import DTROS
 

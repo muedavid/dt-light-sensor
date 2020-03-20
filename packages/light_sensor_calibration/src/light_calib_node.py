@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 import rospy
 import time
-#from Adafruit_GPIO import I2C
 import RPi.GPIO as GPIO
 import Adafruit_TCS34725
-#import smbus
 import yaml
 import os.path
 import shutil
 import numpy as np
 from duckietown import DTROS
-#from duckietown_utils import get_duckiefleet_root
 from future.builtins import input
 
 
