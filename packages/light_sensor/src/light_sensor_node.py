@@ -38,6 +38,9 @@ class LightSensorNode(DTROS):
         self.default_offset=0
         #set parametervalue
         self.readParamFromFile()
+        
+        #define time between evaluations in sec. 
+        self.timesensor = 0.1
 
 
         # ROS-Publications
@@ -45,7 +48,7 @@ class LightSensorNode(DTROS):
         self.sensor_pub = rospy.Publisher('~sensor_data', LightSensor, queue_size=1)
         while not rospy.is_shutdown():
             self.get_lux()
-            rospy.sleep(rospy.Duration.from_sec(0.5))
+            rospy.sleep(rospy.Duration.from_sec(self.timesensor))
         
     def get_lux(self):
         # Read R, G, B, C color data from the sensor.
