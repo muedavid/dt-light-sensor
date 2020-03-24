@@ -36,7 +36,7 @@ class LightSensorCalibrator(DTROS):
         self.filename = self.dirname  + self.veh_name + ".yaml"
         
         # look if we have already done a callibration
-        if os.path.isdir('/data/config/calibrations/light-sensor/'):
+        if os.path.isdir(self.dirname):
             decission = input("calibration is already done. Do you want to make a newcallibration ? [Y/N]")
             if (decission == "Y") or (decission =="y"):# versuche wie or wirklich aussehen muss. 
                 shutil.rmtree (self.dirname)
@@ -44,18 +44,18 @@ class LightSensorCalibrator(DTROS):
                 print("the old calibration is still valid and the node will shutdown because we already have a callibration file")
         
         #make the folder for saving the callibration        
-        os.makedirs(self.dirname) # if decission was not y or Y we will get now an error and process shutdown
+         # if decission was not y or Y we will get now an error and process shutdown
         
         #vaiables
         self.mult = 1
         self.offset = 0
         self.lux = 0
         
-        #callibration
-        self.callibrator ()
-        
-        #set the parameter
-        self.set_param()
+        if not os.path.isdir(self.dirname):
+            #callibration
+            self.callibrator ()
+            #set the parameter
+            self.set_param()
 
     def callibrator(self):
         lux1 = []
@@ -69,8 +69,8 @@ class LightSensorCalibrator(DTROS):
             if count > 2:
                 self.get_lux()
                 if count > 6:
-                    average = np.average (lux1)
-                    if np.abs (self.lux - average) > 15:
+                    median = np.median (lux1)
+                    if np.abs (self.lux - median) > 15:
                         count -= 1 # we repeat the measurment
                         print("this measurment will be repeated")
                     else:
@@ -98,8 +98,8 @@ class LightSensorCalibrator(DTROS):
             if count > 3:
                 self.get_lux()
                 if count > 6:
-                    average = np.average (lux2)
-                    if np.abs(self.lux - average) > 15:
+                    median = np.median (lux2)
+                    if np.abs(self.lux - median) > 15:
                         count -= 1 # we repeat the measurment
                         print("this measurment will be repeated")
                     else:    
@@ -130,7 +130,7 @@ class LightSensorCalibrator(DTROS):
             "mult": int(self.mult),
             "offset": int(self.offset)
         }
-        
+        os.makedirs(self.dirname)
         with open(self.filename, 'w') as file:
             file.write(yaml.dump(data, default_flow_style=False))
             rospy.loginfo("[%s] Saved to %s" % (self.node_name, self.filename))
