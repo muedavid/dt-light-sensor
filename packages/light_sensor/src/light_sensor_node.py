@@ -10,10 +10,24 @@ from duckietown import DTROS
 
 
 class LightSensorNode(DTROS):
+    """Node handling the measurment of light.
+        measures the light in the room and publish it.
 
+        Publishers:
+           ~sensor_data (:obj:`LightSensor`): Publishes measured intesitiy of red, green and blue, the calculated lux and the real_lux value that takes 
+           callibration into account. It publishes also the temperature of the light. 
+    """
+    
     def __init__(self, node_name):
         # initialize the DTROS parent class
         super(LightSensorNode, self).__init__(node_name=node_name)
+
+        # Add the node parameters to the parameters dictionary and load their default values
+        self.parameters['~default_mult'] = None
+        self.parameters['~default_offset']=None
+        self.parameters['~frequency']=None
+        self.updateParameters()
+
         self.veh_name = rospy.get_namespace().strip("/")
         
         # GPIO setup
@@ -34,18 +48,18 @@ class LightSensorNode(DTROS):
         #define parameter
         self.mult = 0
         self.offset = 0
-        self.default_mult=1
-        self.default_offset=0
+        self.default_mult=self.parameters['~default_mult'] #default value = 1
+        self.default_offset= self.parameters['~default_offset'] #default value = 0
         #set parametervalue
         self.readParamFromFile()
         
         #define time between evaluations in sec. 
-        self.timesensor = 0.1
+        self.timesensor = 1/self.parameters['~frequency'] #value = 1: every second one measurment
 
 
         # ROS-Publications
         self.msg_light_sensor = LightSensor()
-        self.sensor_pub = rospy.Publisher('~sensor_data', LightSensor, queue_size=1)
+        self.sensor_pub = self.publisher('~sensor_data', LightSensor, queue_size=1)
         while not rospy.is_shutdown():
             self.get_lux()
             rospy.sleep(rospy.Duration.from_sec(self.timesensor))
@@ -88,8 +102,8 @@ class LightSensorNode(DTROS):
                 self.mult = yaml_dict["mult"]
                 self.offset = yaml_dict["offset"]
                 
-        rospy.loginfo("[%s] %s = %s " % (self.node_name,"mult", self.mult))
-        rospy.loginfo("[%s] %s = %s " % (self.node_name,"offset", self.offset))
+        rospy.loginfo("[%s] from callibration %s = %s " % (self.node_name,"mult", self.mult))
+        rospy.loginfo("[%s] from callibration %s = %s " % (self.node_name,"offset", self.offset))
 
 
 if __name__ == '__main__':

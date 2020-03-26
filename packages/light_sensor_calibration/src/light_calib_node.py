@@ -12,6 +12,12 @@ from future.builtins import input
 
 
 class LightSensorCalibrator(DTROS):
+
+    """Node handling the callibration of the light sensor: Adafruit_TCS34725.
+        Leads you through the callibration of the light sensor and save the callibration file. If we already have done a callibration we can choose if we
+        want to recallibrate everything. 
+    """
+
     def __init__(self, node_name,disable_signals=False):
         # initialize the DTROS parent class
         super(LightSensorCalibrator, self).__init__(node_name=node_name)

@@ -1,10 +1,12 @@
   
 <launch>
 	<arg name="veh"/>
+    <arg name="node_name" default="light_sensor_node"/>
+    <arg name="param_file_name" default="default" doc="Specify a param file. ex:megaman." />
+
 	<group ns="$(arg veh)">
 		<node name="light_sensor_node" pkg="light_sensor" type="light_sensor_node.py" output="screen">
-			
+			<rosparam command="load" file="$(find light_sensor)/config/$(arg node_name)/$(arg param_file_name).yaml"/>
 		</node>
-		
 	</group>
 </launch>
